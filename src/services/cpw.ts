@@ -29,7 +29,7 @@ export const getCPWByFoodId = async (foodId: string) => {
 export const createCPW = async (data: any) => {
   // if the food is already in the DB thrown error. Should be selected from the list
   if (!data.foodId || !data.foodWeight || !data.foodCalories) {
-    return "Food fields incomplete";
+    return 0;
   }
 
   // add data to UserFood Collection

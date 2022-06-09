@@ -1,6 +1,4 @@
-import { ObjectId } from "mongodb";
 import { getDb } from "../gateway/mongo";
-// import { calculateCaloriesFromNew, getFoodCaloriesPerWeight } from "./cpw";
 
 export interface Goal {
   _id?: string;
@@ -19,9 +17,8 @@ export const getGoalCollection = async () => {
 };
 
 export const createGoal = async (data: any) => {
-  // if the food is already in the DB thrown error. Should be selected from the list
-  if (!data.iniWeight || !data.height) {
-    return "Goal fields incomplete";
+  if (!data.currentWeight || !data.trainingFactor) {
+    return 1;
   }
   const col = await getGoalCollection();
   const { insertedId } = await col.insertOne(data);

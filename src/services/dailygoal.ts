@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import { getDb } from "../gateway/mongo";
 
 export interface DailyGoal {
@@ -16,14 +15,14 @@ export const getDailyGoalCollection = async () => {
 
 export const createDailyGoal = async (data: any) => {
   if (!data.goalId || !data.dailyCalories) {
-    return "Daily Goal fields incomplete";
+    return 1;
   }
   const col = await getDailyGoalCollection();
   const { insertedId } = await col.insertOne(data);
   return insertedId;
 };
 
-export const getCurrentDailyGoalByUser = async (userId: string) => {
+export const getCurrentDailyGoalByUser = async (goalId: string) => {
   const col = await getDailyGoalCollection();
-  return col.find({ userId: userId }).sort({ _id: -1 }).limit(1).toArray();
+  return col.find({ goalId: goalId }).sort({ _id: -1 }).limit(1).toArray();
 };

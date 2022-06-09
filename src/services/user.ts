@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { closeDb, getDb } from "../gateway/mongo";
+import { getDb } from "../gateway/mongo";
 
 export interface User {
   _id?: string;
@@ -15,10 +15,12 @@ export const getUserCollection = async () => {
   return db.collection<User>("user");
 };
 
-// Create new user (Sign up page)
-export const createUser = async (newUser: User) => {
+export const createUser = async (data: User) => {
+  if (!data.firstName || !data.email || !data.ageGroup) {
+    return 1;
+  }
   const col = await getUserCollection();
-  const { insertedId } = await col.insertOne(newUser);
+  const { insertedId } = await col.insertOne(data);
   return insertedId.toString();
 };
 
@@ -34,12 +36,11 @@ export const getUserById = async (id: ObjectId) => {
 
 export const getUserByEmail = async (email: string) => {
   const col = await getUserCollection();
-  const ret = col.find({
+  return col.findOne({
     email: {
       $regex: `.*${email}.*`,
     },
   });
-  return ret.toArray();
 };
 
 // The code commented bellow is not mandatory at this point - Phase 5
