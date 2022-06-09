@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import * as functions from "firebase-functions";
 import { config } from "dotenv";
 import { ObjectId } from "mongodb";
 import {
@@ -201,6 +202,4 @@ app.get("/dailygoalbyuser/:userid", async (req, res) => {
 
 // >>>>>>>>>>>>>>>>>>>>> DELETE <<<<<<<<<<<<<<<<<<<<<<< //
 
-app.listen(3000, () => {
-  console.log("Listening on http://localhost:3000");
-});
+export const api = functions.https.onRequest(app);
