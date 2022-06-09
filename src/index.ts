@@ -71,7 +71,8 @@ app.post("/createcpw", async (req, res) => {
 // TESTED
 app.post("/creategoal", async (req, res) => {
   try {
-    await createGoal(req.body);
+    console.log(req.body);
+    //await createGoal(req.body);
     res.sendStatus(200);
   } catch (err) {
     // send the response a json object instead of text
@@ -84,7 +85,8 @@ app.post("/creategoal", async (req, res) => {
 // TESTED
 app.post("/createdailygoal", async (req, res) => {
   try {
-    await createDailyGoal(req.body);
+    console.log(req.body);
+    //await createDailyGoal(req.body);
     res.sendStatus(200);
   } catch (err) {
     // send the response a json object instead of text
