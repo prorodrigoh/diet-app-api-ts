@@ -1,29 +1,18 @@
-// import { ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { closeDb, getDb } from "../gateway/mongo";
 
 export interface User {
-  //id?: ObjectId;
+  _id?: string;
   createAt: number;
   firstName: string;
   lastName: string;
-  DOBm: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
-  DOBy: number;
   email: string;
+  ageGroup: number;
 }
-
-export const closeDBConnection = async () => {
-  const db = await closeDb();
-};
 
 export const getUserCollection = async () => {
   const db = await getDb();
   return db.collection<User>("user");
-};
-
-// return all registered users in the app (admin)
-export const getAllUsers = async () => {
-  const col = await getUserCollection();
-  return col.find().toArray();
 };
 
 // Create new user (Sign up page)
@@ -33,16 +22,25 @@ export const createUser = async (newUser: User) => {
   return insertedId.toString();
 };
 
-// // Return the user by email (Login Page)
-// export const getUserByEmail = async (email: string) => {
-//   const col = await getUserCollection();
-//   const ret = col.find({
-//     email: {
-//       $regex: `.*${email}.*`,
-//     },
-//   });
-//   return ret.toArray();
-// };
+export const getAllUsers = async () => {
+  const col = await getUserCollection();
+  return col.find().toArray();
+};
+
+export const getUserById = async (id: ObjectId) => {
+  const col = await getUserCollection();
+  return col.findOne({ _id: id as any });
+};
+
+export const getUserByEmail = async (email: string) => {
+  const col = await getUserCollection();
+  const ret = col.find({
+    email: {
+      $regex: `.*${email}.*`,
+    },
+  });
+  return ret.toArray();
+};
 
 // The code commented bellow is not mandatory at this point - Phase 5
 //
@@ -63,11 +61,3 @@ export const createUser = async (newUser: User) => {
 //   const target = await getUserByEmail(email);
 //   const result = col.deleteOne(target._id);
 // };
-
-// TEST
-
-// // create a user
-// await createUser("Rodrigo", "Henriques", "01/01/2020", "teste@google.com");
-// // show all entries
-// const user = await getUser();
-// console.log(user);
