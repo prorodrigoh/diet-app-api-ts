@@ -1,4 +1,5 @@
 import { getDb } from "../gateway/mongo";
+import { getCurrentGoalByUser } from "./goal";
 
 export interface DailyGoal {
   _id?: string;
@@ -22,7 +23,8 @@ export const createDailyGoal = async (data: any) => {
   return insertedId;
 };
 
-export const getCurrentDailyGoalByUser = async (goalId: string) => {
+export const getCurrentDailyGoalByGoalId = async (goalId: string) => {
   const col = await getDailyGoalCollection();
   return col.find({ goalId: goalId }).sort({ _id: -1 }).limit(1).toArray();
+  //return col.findOne({ goalId: goalId, $sort: { _id: -1 } });
 };

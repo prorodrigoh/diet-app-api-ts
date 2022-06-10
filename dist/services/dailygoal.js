@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCurrentDailyGoalByUser = exports.createDailyGoal = exports.getDailyGoalCollection = void 0;
+exports.getCurrentDailyGoalByGoalId = exports.createDailyGoal = exports.getDailyGoalCollection = void 0;
 const mongo_1 = require("../gateway/mongo");
 const getDailyGoalCollection = () => __awaiter(void 0, void 0, void 0, function* () {
     const db = yield (0, mongo_1.getDb)();
@@ -25,8 +25,9 @@ const createDailyGoal = (data) => __awaiter(void 0, void 0, void 0, function* ()
     return insertedId;
 });
 exports.createDailyGoal = createDailyGoal;
-const getCurrentDailyGoalByUser = (goalId) => __awaiter(void 0, void 0, void 0, function* () {
+const getCurrentDailyGoalByGoalId = (goalId) => __awaiter(void 0, void 0, void 0, function* () {
     const col = yield (0, exports.getDailyGoalCollection)();
     return col.find({ goalId: goalId }).sort({ _id: -1 }).limit(1).toArray();
+    //return col.findOne({ goalId: goalId, $sort: { _id: -1 } });
 });
-exports.getCurrentDailyGoalByUser = getCurrentDailyGoalByUser;
+exports.getCurrentDailyGoalByGoalId = getCurrentDailyGoalByGoalId;

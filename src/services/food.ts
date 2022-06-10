@@ -4,13 +4,23 @@ import { getDb } from "../gateway/mongo";
 
 export interface Food {
   _id?: string;
-  createAt: number;
+  createdAt: number;
   userId: string;
   foodName: string;
   isoWeight: number;
   isoUnit: string;
   isoCalories: number;
 }
+
+let today = new Date();
+let date: string =
+  today.getUTCFullYear() + "-" + today.getUTCMonth() + "-" + today.getUTCDate();
+let tomorrow: string =
+  today.getUTCFullYear() +
+  "-" +
+  today.getUTCMonth() +
+  "-" +
+  (today.getUTCDate() + 1);
 
 export const getFoodCollection = async () => {
   const db = await getDb();
@@ -31,12 +41,15 @@ export const getAllFoodsByUser = async (userId: string) => {
   const col = await getFoodCollection();
   return col.find({ userId: userId }).toArray();
 };
-
+export const getAllFoodsOfTheDayByUser = async (userId: string) => {
+  const col = await getFoodCollection();
+  return col.find({ userId: userId }).toArray();
+};
 export const createFood = async (data: any) => {
   if (!data.foodName || !data.isoWeight || !data.isoCalories) {
     return 1;
   }
-
+  data.createdAt = date;
   const col = await getFoodCollection();
   const { insertedId } = await col.insertOne(data);
   return insertedId;

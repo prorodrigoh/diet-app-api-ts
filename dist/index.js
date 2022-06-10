@@ -93,8 +93,7 @@ app.post("/createcpw", (req, res) => __awaiter(void 0, void 0, void 0, function*
 // TESTED
 app.post("/creategoal", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(req.body);
-        //await createGoal(req.body);
+        yield (0, goal_1.createGoal)(req.body);
         res.sendStatus(200);
     }
     catch (err) {
@@ -107,8 +106,7 @@ app.post("/creategoal", (req, res) => __awaiter(void 0, void 0, void 0, function
 // TESTED
 app.post("/createdailygoal", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(req.body);
-        //await createDailyGoal(req.body);
+        yield (0, dailygoal_1.createDailyGoal)(req.body);
         res.sendStatus(200);
     }
     catch (err) {
@@ -156,6 +154,30 @@ app.get("/allfoodsbyuser/:userid", (req, res) => __awaiter(void 0, void 0, void 
         });
     }
 }));
+app.get("/allfoodsofthedaybyuser/:userid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = yield (0, food_1.getAllFoodsOfTheDayByUser)(req.params.userid);
+        res.status(200).send(data);
+    }
+    catch (err) {
+        // send the response a json object instead of text
+        res.status(400).send({
+            message: "Problems with user",
+        });
+    }
+}));
+app.get("/allcpwbyfoodid/:foodid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const allcpwbyfoodid = yield (0, cpw_1.getCPWByFoodId)(req.params.foodid);
+        res.status(200).send(allcpwbyfoodid);
+    }
+    catch (err) {
+        // send the response a json object instead of text
+        res.status(400).send({
+            message: "Problems with food",
+        });
+    }
+}));
 // TESTED
 app.get("/userbyid/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -186,28 +208,45 @@ app.get("/foodbyid/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
 }));
 //TESTED
 app.get("/currentweekgoalbyuser/:userid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let userId = req.params.userid;
     try {
-        const goalbyuser = yield (0, goal_1.getCurrentGoalByUser)(req.params.userid);
-        res.status(200).send(goalbyuser);
+        const weekgoal = yield (0, goal_1.getCurrentGoalByUser)(userId);
+        res.status(200).send(weekgoal);
     }
     catch (err) {
         // send the response a json object instead of text
         res.status(400).send({
-            message: "Problems with goal by user id",
+            message: `Problems with goal by user id ${userId}`,
         });
     }
 }));
 //TESTED
 app.get("/dailygoalbyuser/:userid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let userId = req.params.userid;
     try {
-        const data = yield (0, goal_1.getCurrentGoalByUser)(req.params.userid);
-        const dailygoalbyuser = yield (0, dailygoal_1.getCurrentDailyGoalByUser)(data[0]._id.toString());
-        res.status(200).send(dailygoalbyuser);
+        const data = yield (0, goal_1.getCurrentGoalByUser)(userId);
+        const dailygoal = yield (0, dailygoal_1.getCurrentDailyGoalByGoalId)(data[0]._id);
+        res.status(200).send(dailygoal);
     }
     catch (err) {
+        console.log(err);
         // send the response a json object instead of text
         res.status(400).send({
-            message: "Problems with daily goal by user id",
+            message: `Problems with daily goal by user id ${userId}`,
+        });
+    }
+}));
+//TESTED
+app.get("/dailygoalbygoalid/:goalid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const dailygoal = yield (0, dailygoal_1.getCurrentDailyGoalByGoalId)(req.params.goalid);
+        res.status(200).send(dailygoal);
+    }
+    catch (err) {
+        console.log(err);
+        // send the response a json object instead of text
+        res.status(400).send({
+            message: `Problems with daily goal by goal id ${req.params.goalid}`,
         });
     }
 }));

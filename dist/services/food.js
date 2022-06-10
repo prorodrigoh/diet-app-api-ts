@@ -9,8 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createFood = exports.getAllFoodsByUser = exports.getFoodById = exports.getAllFoods = exports.getFoodCollection = void 0;
+exports.createFood = exports.getAllFoodsOfTheDayByUser = exports.getAllFoodsByUser = exports.getFoodById = exports.getAllFoods = exports.getFoodCollection = void 0;
 const mongo_1 = require("../gateway/mongo");
+let today = new Date();
+let date = today.getUTCFullYear() + "-" + today.getUTCMonth() + "-" + today.getUTCDate();
+let tomorrow = today.getUTCFullYear() +
+    "-" +
+    today.getUTCMonth() +
+    "-" +
+    (today.getUTCDate() + 1);
 const getFoodCollection = () => __awaiter(void 0, void 0, void 0, function* () {
     const db = yield (0, mongo_1.getDb)();
     return db.collection("food");
@@ -31,10 +38,16 @@ const getAllFoodsByUser = (userId) => __awaiter(void 0, void 0, void 0, function
     return col.find({ userId: userId }).toArray();
 });
 exports.getAllFoodsByUser = getAllFoodsByUser;
+const getAllFoodsOfTheDayByUser = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const col = yield (0, exports.getFoodCollection)();
+    return col.find({ userId: userId }).toArray();
+});
+exports.getAllFoodsOfTheDayByUser = getAllFoodsOfTheDayByUser;
 const createFood = (data) => __awaiter(void 0, void 0, void 0, function* () {
     if (!data.foodName || !data.isoWeight || !data.isoCalories) {
         return 1;
     }
+    data.createdAt = date;
     const col = yield (0, exports.getFoodCollection)();
     const { insertedId } = yield col.insertOne(data);
     return insertedId;
