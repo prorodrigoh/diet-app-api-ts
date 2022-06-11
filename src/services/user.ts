@@ -3,7 +3,7 @@ import { getDb } from "../gateway/mongo";
 
 export interface User {
   _id?: string;
-  createAt: number;
+  createdAt?: Date;
   firstName: string;
   lastName: string;
   email: string;
@@ -19,11 +19,14 @@ export const createUser = async (data: User) => {
   if (!data.firstName || !data.email || !data.ageGroup) {
     return 1;
   }
+  data.createdAt = new Date();
   const col = await getUserCollection();
   const { insertedId } = await col.insertOne(data);
   return insertedId.toString();
 };
-
+//
+//
+//
 export const getAllUsers = async () => {
   const col = await getUserCollection();
   return col.find().toArray();

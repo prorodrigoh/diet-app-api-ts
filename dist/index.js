@@ -54,8 +54,8 @@ app.use((0, cors_1.default)());
 // TESTED
 app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield (0, user_1.createUser)(req.body);
-        res.sendStatus(200);
+        const id = yield (0, user_1.createUser)(req.body);
+        res.sendStatus(200).send(id);
     }
     catch (err) {
         // send the response a json object instead of text
@@ -67,8 +67,8 @@ app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 // TESTED
 app.post("/createfood", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield (0, food_1.createFood)(req.body);
-        res.sendStatus(200);
+        const id = yield (0, food_1.createFood)(req.body);
+        res.sendStatus(200).send(id);
     }
     catch (err) {
         // send the response a json object instead of text
@@ -80,8 +80,8 @@ app.post("/createfood", (req, res) => __awaiter(void 0, void 0, void 0, function
 // TESTED
 app.post("/createcpw", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield (0, cpw_1.createCPW)(req.body);
-        res.sendStatus(200);
+        const id = yield (0, cpw_1.createCPW)(req.body);
+        res.sendStatus(200).send(id);
     }
     catch (err) {
         // send the response a json object instead of text
@@ -93,8 +93,8 @@ app.post("/createcpw", (req, res) => __awaiter(void 0, void 0, void 0, function*
 // TESTED
 app.post("/creategoal", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield (0, goal_1.createGoal)(req.body);
-        res.sendStatus(200);
+        const id = yield (0, goal_1.createGoal)(req.body);
+        res.sendStatus(200).send(id);
     }
     catch (err) {
         // send the response a json object instead of text
@@ -106,8 +106,8 @@ app.post("/creategoal", (req, res) => __awaiter(void 0, void 0, void 0, function
 // TESTED
 app.post("/createdailygoal", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield (0, dailygoal_1.createDailyGoal)(req.body);
-        res.sendStatus(200);
+        const id = yield (0, dailygoal_1.createDailyGoal)(req.body);
+        res.sendStatus(200).send(id);
     }
     catch (err) {
         // send the response a json object instead of text
@@ -123,8 +123,8 @@ app.get("/", (req, res) => {
 });
 // TESTED
 app.get("/login/:email", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userFood = yield (0, user_1.getUserByEmail)(req.params.email);
-    res.status(200).send(userFood);
+    const userData = yield (0, user_1.getUserByEmail)(req.params.email);
+    res.status(200).send(userData);
 }));
 // TESTED
 app.get("/allusers", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -210,7 +210,7 @@ app.get("/foodbyid/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
 app.get("/currentweekgoalbyuser/:userid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let userId = req.params.userid;
     try {
-        const weekgoal = yield (0, goal_1.getCurrentGoalByUser)(userId);
+        const weekgoal = yield (0, goal_1.getCurrentWeekGoalByUser)(userId);
         res.status(200).send(weekgoal);
     }
     catch (err) {
@@ -224,13 +224,11 @@ app.get("/currentweekgoalbyuser/:userid", (req, res) => __awaiter(void 0, void 0
 app.get("/dailygoalbyuser/:userid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let userId = req.params.userid;
     try {
-        const data = yield (0, goal_1.getCurrentGoalByUser)(userId);
+        const data = yield (0, goal_1.getCurrentWeekGoalByUser)(userId);
         const dailygoal = yield (0, dailygoal_1.getCurrentDailyGoalByGoalId)(data[0]._id);
         res.status(200).send(dailygoal);
     }
     catch (err) {
-        console.log(err);
-        // send the response a json object instead of text
         res.status(400).send({
             message: `Problems with daily goal by user id ${userId}`,
         });

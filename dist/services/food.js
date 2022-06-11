@@ -9,20 +9,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createFood = exports.getAllFoodsOfTheDayByUser = exports.getAllFoodsByUser = exports.getFoodById = exports.getAllFoods = exports.getFoodCollection = void 0;
+exports.getAllFoodsOfTheDayByUser = exports.getAllFoodsByUser = exports.getFoodById = exports.getAllFoods = exports.getCPWCollection = exports.createFood = exports.getFoodCollection = void 0;
 const mongo_1 = require("../gateway/mongo");
-let today = new Date();
-let date = today.getUTCFullYear() + "-" + today.getUTCMonth() + "-" + today.getUTCDate();
-let tomorrow = today.getUTCFullYear() +
-    "-" +
-    today.getUTCMonth() +
-    "-" +
-    (today.getUTCDate() + 1);
 const getFoodCollection = () => __awaiter(void 0, void 0, void 0, function* () {
     const db = yield (0, mongo_1.getDb)();
     return db.collection("food");
 });
 exports.getFoodCollection = getFoodCollection;
+const createFood = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!data.foodName || !data.isoWeight || !data.isoCalories) {
+        return 1;
+    }
+    data.createdAt = new Date();
+    const col = yield (0, exports.getFoodCollection)();
+    const { insertedId } = yield col.insertOne(data);
+    return insertedId;
+});
+exports.createFood = createFood;
+//
+//
+//
+const getCPWCollection = () => __awaiter(void 0, void 0, void 0, function* () {
+    const db = yield (0, mongo_1.getDb)();
+    return db.collection("cpw");
+});
+exports.getCPWCollection = getCPWCollection;
+//
+//
+//
 const getAllFoods = () => __awaiter(void 0, void 0, void 0, function* () {
     const col = yield (0, exports.getFoodCollection)();
     return col.find().toArray();
@@ -39,20 +53,19 @@ const getAllFoodsByUser = (userId) => __awaiter(void 0, void 0, void 0, function
 });
 exports.getAllFoodsByUser = getAllFoodsByUser;
 const getAllFoodsOfTheDayByUser = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const col = yield (0, exports.getFoodCollection)();
-    return col.find({ userId: userId }).toArray();
+    const colFood = yield (0, exports.getFoodCollection)();
+    const colCPW = yield (0, exports.getCPWCollection)();
+    const arrFood = colFood
+        .find({
+        userId: userId,
+        createdAt: {
+            $gte: new Date(new Date().setHours(0, 0, 0)),
+            $lt: new Date(new Date().setHours(23, 59, 59)),
+        },
+    })
+        .toArray();
 });
 exports.getAllFoodsOfTheDayByUser = getAllFoodsOfTheDayByUser;
-const createFood = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!data.foodName || !data.isoWeight || !data.isoCalories) {
-        return 1;
-    }
-    data.createdAt = date;
-    const col = yield (0, exports.getFoodCollection)();
-    const { insertedId } = yield col.insertOne(data);
-    return insertedId;
-});
-exports.createFood = createFood;
 // TO USER LATER IF HAVE TIME
 //
 // The code commented bellow is not mandatory at this point - Phase 5

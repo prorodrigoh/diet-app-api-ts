@@ -9,15 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCPW = exports.getCPWByFoodId = exports.getAllCPW = exports.getCaloriesPerWeight = void 0;
-// import { ObjectId } from "mongodb";
+exports.getCPWByFoodId = exports.getAllCPW = exports.createCPW = exports.getCaloriesPerWeight = void 0;
 const mongo_1 = require("../gateway/mongo");
 const getCaloriesPerWeight = () => __awaiter(void 0, void 0, void 0, function* () {
     const db = yield (0, mongo_1.getDb)();
     return db.collection("cpw");
 });
 exports.getCaloriesPerWeight = getCaloriesPerWeight;
-// return all registered cpw in the app (admin)
+const createCPW = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!data.foodId || !data.foodWeight || !data.foodCalories) {
+        return 0;
+    }
+    data.createdAt = new Date();
+    const col = yield (0, exports.getCaloriesPerWeight)();
+    const { insertedId } = yield col.insertOne(data);
+    return insertedId;
+});
+exports.createCPW = createCPW;
+//
+//
+//
 const getAllCPW = () => __awaiter(void 0, void 0, void 0, function* () {
     const col = yield (0, exports.getCaloriesPerWeight)();
     return col.find().toArray();
@@ -28,14 +39,3 @@ const getCPWByFoodId = (foodId) => __awaiter(void 0, void 0, void 0, function* (
     return col.find({ foodId }).toArray();
 });
 exports.getCPWByFoodId = getCPWByFoodId;
-const createCPW = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    // if the food is already in the DB thrown error. Should be selected from the list
-    if (!data.foodId || !data.foodWeight || !data.foodCalories) {
-        return 0;
-    }
-    // add data to UserFood Collection
-    const col = yield (0, exports.getCaloriesPerWeight)();
-    const { insertedId } = yield col.insertOne(data);
-    return insertedId;
-});
-exports.createCPW = createCPW;

@@ -20,11 +20,15 @@ const createUser = (data) => __awaiter(void 0, void 0, void 0, function* () {
     if (!data.firstName || !data.email || !data.ageGroup) {
         return 1;
     }
+    data.createdAt = new Date();
     const col = yield (0, exports.getUserCollection)();
     const { insertedId } = yield col.insertOne(data);
     return insertedId.toString();
 });
 exports.createUser = createUser;
+//
+//
+//
 const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     const col = yield (0, exports.getUserCollection)();
     return col.find().toArray();

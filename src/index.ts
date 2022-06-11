@@ -17,7 +17,7 @@ import {
   getFoodById,
 } from "./services/food";
 import { createCPW, getAllCPW, getCPWByFoodId } from "./services/cpw";
-import { createGoal, getCurrentGoalByUser } from "./services/goal";
+import { createGoal, getCurrentWeekGoalByUser } from "./services/goal";
 import {
   createDailyGoal,
   getCurrentDailyGoalByGoalId,
@@ -34,8 +34,8 @@ app.use(cors());
 // TESTED
 app.post("/signup", async (req, res) => {
   try {
-    await createUser(req.body);
-    res.sendStatus(200);
+    const id = await createUser(req.body);
+    res.sendStatus(200).send(id);
   } catch (err) {
     // send the response a json object instead of text
     res.status(400).send({
@@ -47,8 +47,8 @@ app.post("/signup", async (req, res) => {
 // TESTED
 app.post("/createfood", async (req, res) => {
   try {
-    await createFood(req.body);
-    res.sendStatus(200);
+    const id = await createFood(req.body);
+    res.sendStatus(200).send(id);
   } catch (err) {
     // send the response a json object instead of text
     res.status(400).send({
@@ -60,8 +60,8 @@ app.post("/createfood", async (req, res) => {
 // TESTED
 app.post("/createcpw", async (req, res) => {
   try {
-    await createCPW(req.body);
-    res.sendStatus(200);
+    const id = await createCPW(req.body);
+    res.sendStatus(200).send(id);
   } catch (err) {
     // send the response a json object instead of text
     res.status(400).send({
@@ -73,8 +73,8 @@ app.post("/createcpw", async (req, res) => {
 // TESTED
 app.post("/creategoal", async (req, res) => {
   try {
-    await createGoal(req.body);
-    res.sendStatus(200);
+    const id = await createGoal(req.body);
+    res.sendStatus(200).send(id);
   } catch (err) {
     // send the response a json object instead of text
     res.status(400).send({
@@ -86,8 +86,8 @@ app.post("/creategoal", async (req, res) => {
 // TESTED
 app.post("/createdailygoal", async (req, res) => {
   try {
-    await createDailyGoal(req.body);
-    res.sendStatus(200);
+    const id = await createDailyGoal(req.body);
+    res.sendStatus(200).send(id);
   } catch (err) {
     // send the response a json object instead of text
     res.status(400).send({
@@ -105,8 +105,8 @@ app.get("/", (req, res) => {
 
 // TESTED
 app.get("/login/:email", async (req, res) => {
-  const userFood = await getUserByEmail(req.params.email);
-  res.status(200).send(userFood);
+  const userData = await getUserByEmail(req.params.email);
+  res.status(200).send(userData);
 });
 
 // TESTED
@@ -196,7 +196,7 @@ app.get("/foodbyid/:id", async (req, res) => {
 app.get("/currentweekgoalbyuser/:userid", async (req, res) => {
   let userId = req.params.userid;
   try {
-    const weekgoal = await getCurrentGoalByUser(userId);
+    const weekgoal = await getCurrentWeekGoalByUser(userId);
     res.status(200).send(weekgoal);
   } catch (err) {
     // send the response a json object instead of text
@@ -210,14 +210,10 @@ app.get("/currentweekgoalbyuser/:userid", async (req, res) => {
 app.get("/dailygoalbyuser/:userid", async (req, res) => {
   let userId = req.params.userid;
   try {
-    const data = await getCurrentGoalByUser(userId);
-
+    const data = await getCurrentWeekGoalByUser(userId);
     const dailygoal = await getCurrentDailyGoalByGoalId(data[0]._id);
-
     res.status(200).send(dailygoal);
   } catch (err) {
-    console.log(err);
-    // send the response a json object instead of text
     res.status(400).send({
       message: `Problems with daily goal by user id ${userId}`,
     });

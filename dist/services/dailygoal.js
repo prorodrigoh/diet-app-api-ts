@@ -20,14 +20,17 @@ const createDailyGoal = (data) => __awaiter(void 0, void 0, void 0, function* ()
     if (!data.goalId || !data.dailyCalories) {
         return 1;
     }
+    data.createdAt = new Date();
     const col = yield (0, exports.getDailyGoalCollection)();
     const { insertedId } = yield col.insertOne(data);
     return insertedId;
 });
 exports.createDailyGoal = createDailyGoal;
+//
+//
+//
 const getCurrentDailyGoalByGoalId = (goalId) => __awaiter(void 0, void 0, void 0, function* () {
     const col = yield (0, exports.getDailyGoalCollection)();
     return col.find({ goalId: goalId }).sort({ _id: -1 }).limit(1).toArray();
-    //return col.findOne({ goalId: goalId, $sort: { _id: -1 } });
 });
 exports.getCurrentDailyGoalByGoalId = getCurrentDailyGoalByGoalId;

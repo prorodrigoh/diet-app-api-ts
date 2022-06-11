@@ -1,10 +1,11 @@
 import { ObjectId } from "mongodb";
 import { getDb } from "../gateway/mongo";
+import { CaloriesPerWeight } from "./cpw";
 // import { calculateCaloriesFromNew, getFoodCaloriesPerWeight } from "./cpw";
 
 export interface Food {
   _id?: string;
-  createdAt: number;
+  createdAt: Date;
   userId: string;
   foodName: string;
   isoWeight: number;
@@ -12,20 +13,33 @@ export interface Food {
   isoCalories: number;
 }
 
-let today = new Date();
-let date: string =
-  today.getUTCFullYear() + "-" + today.getUTCMonth() + "-" + today.getUTCDate();
-let tomorrow: string =
-  today.getUTCFullYear() +
-  "-" +
-  today.getUTCMonth() +
-  "-" +
-  (today.getUTCDate() + 1);
-
 export const getFoodCollection = async () => {
   const db = await getDb();
   return db.collection<Food>("food");
 };
+
+export const createFood = async (data: any) => {
+  if (!data.foodName || !data.isoWeight || !data.isoCalories) {
+    return 1;
+  }
+  data.createdAt = new Date();
+  const col = await getFoodCollection();
+  const { insertedId } = await col.insertOne(data);
+  return insertedId;
+};
+
+//
+//
+//
+
+export const getCPWCollection = async () => {
+  const db = await getDb();
+  return db.collection<CaloriesPerWeight>("cpw");
+};
+
+//
+//
+//
 
 export const getAllFoods = async () => {
   const col = await getFoodCollection();
@@ -41,18 +55,19 @@ export const getAllFoodsByUser = async (userId: string) => {
   const col = await getFoodCollection();
   return col.find({ userId: userId }).toArray();
 };
+
 export const getAllFoodsOfTheDayByUser = async (userId: string) => {
-  const col = await getFoodCollection();
-  return col.find({ userId: userId }).toArray();
-};
-export const createFood = async (data: any) => {
-  if (!data.foodName || !data.isoWeight || !data.isoCalories) {
-    return 1;
-  }
-  data.createdAt = date;
-  const col = await getFoodCollection();
-  const { insertedId } = await col.insertOne(data);
-  return insertedId;
+  const colFood = await getFoodCollection();
+  const colCPW = await getCPWCollection();
+  const arrFood = colFood
+    .find({
+      userId: userId,
+      createdAt: {
+        $gte: new Date(new Date().setHours(0, 0, 0)),
+        $lt: new Date(new Date().setHours(23, 59, 59)),
+      },
+    })
+    .toArray();
 };
 
 // TO USER LATER IF HAVE TIME
