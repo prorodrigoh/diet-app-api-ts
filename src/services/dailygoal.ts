@@ -25,6 +25,20 @@ export const createDailyGoal = async (data: any) => {
 //
 //
 //
+
+export const updateCalDailyGoal = async (id: string, data: any) => {
+  if (!data.goalId || !data.dailyCalories) {
+    return 1;
+  }
+  const col = await getDailyGoalCollection();
+  col.updateOne({ _id: id }, { $set: data }); // Here we are making use of ObjectID and not the string that comes with the parameters
+
+  return 0;
+};
+//
+//
+//
+
 export const getCurrentDailyGoalByGoalId = async (goalId: string) => {
   const col = await getDailyGoalCollection();
   return col.find({ goalId: goalId }).sort({ _id: -1 }).limit(1).toArray();

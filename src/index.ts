@@ -21,6 +21,7 @@ import { createGoal, getCurrentWeekGoalByUser } from "./services/goal";
 import {
   createDailyGoal,
   getCurrentDailyGoalByGoalId,
+  updateCalDailyGoal,
 } from "./services/dailygoal";
 
 config();
@@ -234,6 +235,23 @@ app.get("/dailygoalbygoalid/:goalid", async (req, res) => {
   }
 });
 // >>>>>>>>>>>>>>>>>>>>> UPDATE <<<<<<<<<<<<<<<<<<<<<<< //
+
+app.patch("/updatecaldailygoal/:goalid", async (req, res) => {
+  try {
+    // const id = new ObjectId(req.params.goalid);                // Here we are making the conversion from string to ObjectId
+    // const data = req.body
+    const dailygoal = await updateCalDailyGoal(req.params.goalid, req.body);
+    res.status(200).send(dailygoal);
+  } catch (err) {
+    console.log(err);
+    // send the response a json object instead of text
+    res.status(400).send({
+      message: `Problems with update daily goal by goal id ${req.params.goalid}`,
+    });
+  }
+});
+
+// Here we are making use of ObjectID and not the string that comes with the parameters
 
 // >>>>>>>>>>>>>>>>>>>>> DELETE <<<<<<<<<<<<<<<<<<<<<<< //
 
