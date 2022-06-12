@@ -11,7 +11,7 @@ export interface CaloriesPerWeight {
 
 export const getCaloriesPerWeight = async () => {
   const db = await getDb();
-  return db.collection<CaloriesPerWeight>("cpw");
+  return db.collection<CaloriesPerWeight>("foodcpw");
 };
 
 export const createCPW = async (data: any) => {
