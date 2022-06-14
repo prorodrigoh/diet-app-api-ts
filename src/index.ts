@@ -36,7 +36,7 @@ app.use(cors());
 app.post("/signup", async (req, res) => {
   try {
     const id = await createUser(req.body);
-    res.sendStatus(200).send(id);
+    res.status(200).send(id);
   } catch (err) {
     // send the response a json object instead of text
     res.status(400).send({
@@ -49,7 +49,7 @@ app.post("/signup", async (req, res) => {
 app.post("/createfood", async (req, res) => {
   try {
     const id = await createFood(req.body);
-    res.sendStatus(200).send(id);
+    res.status(200).send(id);
   } catch (err) {
     // send the response a json object instead of text
     res.status(400).send({
@@ -62,7 +62,7 @@ app.post("/createfood", async (req, res) => {
 app.post("/createcpw", async (req, res) => {
   try {
     const id = await createCPW(req.body);
-    res.sendStatus(200).send(id);
+    res.status(200).send(id);
   } catch (err) {
     // send the response a json object instead of text
     res.status(400).send({
@@ -75,7 +75,7 @@ app.post("/createcpw", async (req, res) => {
 app.post("/creategoal", async (req, res) => {
   try {
     const id = await createGoal(req.body);
-    res.sendStatus(200).send(id);
+    res.status(200).send(id);
   } catch (err) {
     // send the response a json object instead of text
     res.status(400).send({
@@ -88,7 +88,7 @@ app.post("/creategoal", async (req, res) => {
 app.post("/createdailygoal", async (req, res) => {
   try {
     const id = await createDailyGoal(req.body);
-    res.sendStatus(200).send(id);
+    res.status(200).send(id);
   } catch (err) {
     // send the response a json object instead of text
     res.status(400).send({
@@ -208,26 +208,11 @@ app.get("/currentweekgoalbyuser/:userid", async (req, res) => {
 });
 
 //TESTED
-app.get("/dailygoalbyuser/:userid", async (req, res) => {
-  let userId = req.params.userid;
-  try {
-    const data = await getCurrentWeekGoalByUser(userId);
-    const dailygoal = await getCurrentDailyGoalByGoalId(data[0]._id);
-    res.status(200).send(dailygoal);
-  } catch (err) {
-    res.status(400).send({
-      message: `Problems with daily goal by user id ${userId}`,
-    });
-  }
-});
-
-//TESTED
 app.get("/dailygoalbygoalid/:goalid", async (req, res) => {
   try {
     const dailygoal = await getCurrentDailyGoalByGoalId(req.params.goalid);
     res.status(200).send(dailygoal);
   } catch (err) {
-    console.log(err);
     // send the response a json object instead of text
     res.status(400).send({
       message: `Problems with daily goal by goal id ${req.params.goalid}`,
@@ -240,13 +225,18 @@ app.patch("/updatecaldailygoal/:goalid", async (req, res) => {
   try {
     // const id = new ObjectId(req.params.goalid);                // Here we are making the conversion from string to ObjectId
     // const data = req.body
-    const dailygoal = await updateCalDailyGoal(req.params.goalid, req.body);
-    res.status(200).send(dailygoal);
+    const updObj = await updateCalDailyGoal(
+      req.params.goalid,
+      req.body.dailyCalories
+    );
+    res
+      .status(200)
+      .send(`Update Complete ${req.params.goalid} ${req.body.dailyCalories}`);
   } catch (err) {
-    console.log(err);
     // send the response a json object instead of text
+    // res.status(400).send(err);
     res.status(400).send({
-      message: `Problems with update daily goal by goal id ${req.params.goalid}`,
+      message: `Problems with update daily goal by goal id ${req.params.goalid} ${req.body.dailyCalories}`,
     });
   }
 });

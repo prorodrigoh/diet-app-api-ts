@@ -1,7 +1,8 @@
 import { getDb } from "../gateway/mongo";
+import { ObjectId } from "mongodb";
 
 export interface DailyGoal {
-  _id?: string;
+  _id?: ObjectId;
   createdAt?: Date;
   goalId: string;
   dailyCalories: number; // update every time user add food from the Food page
@@ -26,15 +27,28 @@ export const createDailyGoal = async (data: any) => {
 //
 //
 
-export const updateCalDailyGoal = async (id: string, data: any) => {
-  if (!data.goalId || !data.dailyCalories) {
-    return 1;
-  }
+export const updateCalDailyGoal = async (id: string, value: any) => {
   const col = await getDailyGoalCollection();
-  col.updateOne({ _id: id }, { $set: data }); // Here we are making use of ObjectID and not the string that comes with the parameters
-
-  return 0;
+  const updid = new ObjectId(id);
+  const stat = col.updateOne(
+    { _id: updid },
+    { $set: { dailyCalories: value } }
+  ); // Here we are making use of ObjectID and not the string that comes with the parameters
+  console.log("dailygoat.ts", updid, value);
+  return stat;
 };
+
+// export const updUserName = async (oldName, newName) => {
+//     const col = await getUserCollection()
+//     const old = await getUserByName(oldName)
+//     // update
+//     const result = col.updateOne(
+//         { _id: old.id },                // filter
+//         { $set: { name: newName } },    // mongo set function
+//     )
+//     // return 1 or 0
+//     return (`Total of modified documents: ${result.modifiedCount}`)
+// }
 //
 //
 //
