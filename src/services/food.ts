@@ -34,7 +34,7 @@ export const createFood = async (data: any) => {
 
 export const getCPWCollection = async () => {
   const db = await getDb();
-  return db.collection<CaloriesPerWeight>("cpw");
+  return db.collection<CaloriesPerWeight>("foodcpw");
 };
 
 //
@@ -56,18 +56,30 @@ export const getAllFoodsByUser = async (userId: string) => {
   return col.find({ userId: userId }).toArray();
 };
 
-export const getAllFoodsOfTheDayByUser = async (userId: string) => {
+const getFoodToCPW = async (userId: string) => {
   const colFood = await getFoodCollection();
-  const colCPW = await getCPWCollection();
-  const arrFood = colFood
+  const foods = await colFood
     .find({
       userId: userId,
-      createdAt: {
-        $gte: new Date(new Date().setHours(0, 0, 0)),
-        $lt: new Date(new Date().setHours(23, 59, 59)),
+    })
+    .toArray();
+  const arrFoodId = foods.map((food) => {
+    return food._id.toString();
+  });
+  return arrFoodId;
+};
+
+export const getAllFoodsOfTheDayByUser = async (userId: string) => {
+  const arrFood = await getFoodToCPW(userId);
+  const colCPW = await getCPWCollection();
+  const arrCPW = await colCPW
+    .find({
+      foodId: {
+        $in: arrFood,
       },
     })
     .toArray();
+  return arrCPW;
 };
 
 // TO USER LATER IF HAVE TIME
