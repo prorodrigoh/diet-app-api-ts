@@ -4,9 +4,12 @@ import { getDb } from "../gateway/mongo";
 export interface User {
   _id?: string;
   createdAt?: Date;
-  firstName: string;
-  lastName: string;
+  uid?: string;
+  googleName?: string;
   email: string;
+  password?: string;
+  firstName?: string;
+  lastName?: string;
   ageGroup: number;
 }
 
@@ -16,7 +19,7 @@ export const getUserCollection = async () => {
 };
 
 export const createUser = async (data: User) => {
-  if (!data.firstName || !data.email || !data.ageGroup) {
+  if (!data.email || !data.ageGroup) {
     return 1;
   }
   data.createdAt = new Date();

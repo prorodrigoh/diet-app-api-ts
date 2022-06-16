@@ -66,6 +66,7 @@ const getFoodToCPW = async (userId: string) => {
   const arrFoodId = foods.map((food) => {
     return food._id.toString();
   });
+  console.log(arrFoodId);
   return arrFoodId;
 };
 
@@ -77,8 +78,13 @@ export const getAllFoodsOfTheDayByUser = async (userId: string) => {
       foodId: {
         $in: arrFood,
       },
+      createdAt: {
+        $gt: new Date(new Date().setHours(0, 0, 0)), // start date,
+        $lt: new Date(new Date().setHours(23, 59, 59)), // end date
+      },
     })
     .toArray();
+  console.log(arrCPW);
   return arrCPW;
 };
 
