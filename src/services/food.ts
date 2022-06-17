@@ -63,29 +63,29 @@ const getFoodToCPW = async (userId: string) => {
       userId: userId,
     })
     .toArray();
-  const arrFoodId = foods.map((food) => {
-    return food._id.toString();
-  });
-  console.log(arrFoodId);
-  return arrFoodId;
+  return foods;
 };
 
 export const getAllFoodsOfTheDayByUser = async (userId: string) => {
-  const arrFood = await getFoodToCPW(userId);
+  const colFood = await getFoodCollection();
   const colCPW = await getCPWCollection();
-  const arrCPW = await colCPW
-    .find({
-      foodId: {
-        $in: arrFood,
-      },
-      createdAt: {
-        $gt: new Date(new Date().setHours(0, 0, 0)), // start date,
-        $lt: new Date(new Date().setHours(23, 59, 59)), // end date
-      },
-    })
-    .toArray();
-  console.log(arrCPW);
-  return arrCPW;
+
+  const foods = await colFood.find({ userId: userId }).toArray();
+  // const foodData = foods.map(async (food) => {
+  //   const arrFoodCPW = await colCPW
+  //     .find({
+  //       foodId: new ObjectId(food._id).toString(),
+  //       createdAt: {
+  //         $gt: new Date(new Date().setHours(0, 0, 0)), // start date,
+  //         $lt: new Date(new Date().setHours(23, 59, 59)), // end date
+  //       },
+  //     })
+  //     .toArray();
+  //   console.log(">>>>> arrFoodCPW <<<<<", arrFoodCPW);
+  //   return arrFoodCPW;
+  // });
+  // console.log(">>>>> FOOD DATA <<<<<", foods);
+  return foods;
 };
 
 // TO USER LATER IF HAVE TIME
