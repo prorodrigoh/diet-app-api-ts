@@ -32,9 +32,12 @@ export const updateCalDailyGoal = async (id: string, value: any) => {
   const updid = new ObjectId(id);
   const stat = col.updateOne(
     { _id: updid },
-    { $set: { dailyCalories: value } }
+    {
+      $set: {
+        dailyCalories: value,
+      },
+    }
   ); // Here we are making use of ObjectID and not the string that comes with the parameters
-  console.log("dailygoat.ts", updid, value);
   return stat;
 };
 
