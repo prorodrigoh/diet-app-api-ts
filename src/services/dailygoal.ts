@@ -60,3 +60,19 @@ export const getCurrentDailyGoalByGoalId = async (goalId: string) => {
   const col = await getDailyGoalCollection();
   return col.find({ goalId: goalId }).sort({ _id: -1 }).limit(1).toArray();
 };
+
+export const getLastDailyGoalOfTheDayByGoalId = async (
+  goalId: string,
+  day: number
+) => {
+  const col = await getDailyGoalCollection();
+  console.log("goalId", goalId, "day", day);
+  return (
+    col
+      // .find({ goalId: goalId, daysToWeightIn: day })
+      .find({ $and: [{ goalId: goalId }, { daysToWeightIn: day }] })
+      // .sort({ _id: -1 })
+      // .limit(1)
+      .toArray()
+  );
+};

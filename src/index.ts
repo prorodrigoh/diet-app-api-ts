@@ -21,6 +21,7 @@ import { createGoal, getCurrentWeekGoalByUser } from "./services/goal";
 import {
   createDailyGoal,
   getCurrentDailyGoalByGoalId,
+  getLastDailyGoalOfTheDayByGoalId,
   updateCalDailyGoal,
 } from "./services/dailygoal";
 
@@ -219,6 +220,23 @@ app.get("/dailygoalbygoalid/:goalid", async (req, res) => {
     });
   }
 });
+
+app.get("/lastdailygoalofthedaybygoalid/:goalid/:days", async (req, res) => {
+  const goalid = req.params.goalid,
+    days = req.params.days as any;
+
+  try {
+    const lastdailygoal = await getLastDailyGoalOfTheDayByGoalId(goalid, days);
+    console.log(lastdailygoal);
+    res.status(200).send(lastdailygoal);
+  } catch (err) {
+    // send the response a json object instead of text
+    res.status(400).send({
+      message: `Problems with last daily goal by goal id ${req.params.goalid}`,
+    });
+  }
+});
+
 // >>>>>>>>>>>>>>>>>>>>> UPDATE <<<<<<<<<<<<<<<<<<<<<<< //
 
 app.patch("/updatecaldailygoal/:goalid", async (req, res) => {
